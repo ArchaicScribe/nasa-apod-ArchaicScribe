@@ -64,12 +64,13 @@ public class ImageFragment extends Fragment {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setHasOptionsMenu(true);
+    setRetainInstance(true);
   }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_image2, container, false);
+    View view = inflater.inflate(R.layout.fragment_image, container, false);
     setupWebView(view);
     setupDatePicker(view);
     setupService();
