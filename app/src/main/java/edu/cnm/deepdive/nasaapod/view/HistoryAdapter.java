@@ -10,7 +10,6 @@ import android.widget.TextView;
 import edu.cnm.deepdive.nasaapod.R;
 import edu.cnm.deepdive.nasaapod.model.Apod;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.Holder> {

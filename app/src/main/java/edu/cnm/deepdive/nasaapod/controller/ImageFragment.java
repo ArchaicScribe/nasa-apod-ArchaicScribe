@@ -81,7 +81,7 @@ public class ImageFragment extends Fragment {
       apod = (Apod) savedInstanceState.getSerializable(APOD_KEY);
     }
     if (apod != null) {
-      loading.setVisibility(View.VISIBLE);
+      loading.setVisibility(View.VISIBLE);//TODO Only if visible
       webView.loadUrl(apod.getUrl());
     } else {
       new ApodTask().execute(calendar.getTime());
@@ -126,7 +126,9 @@ public class ImageFragment extends Fragment {
       @Override
       public void onPageFinished(WebView view, String url) {
         loading.setVisibility(View.GONE);
-        showInfo();
+        if (isVisible()) {
+          showInfo();
+        }
       }
     });
     WebSettings settings = webView.getSettings();
@@ -146,20 +148,12 @@ public class ImageFragment extends Fragment {
 
   private void setupDatePicker(View view) {
     FloatingActionButton jumpDate = view.findViewById(R.id.jump_date);
-    jumpDate.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        DateTimePickerFragment picker = new DateTimePickerFragment();
-        picker.setMode(Mode.DATE);
-        picker.setCalendar(calendar);
-        picker.setListener(new OnChangeListener() { //TODO replace with lambda
-          @Override
-          public void onChange(Calendar cal) {
-            new ApodTask().execute(cal.getTime());
-          }
-        });
-        picker.show(getFragmentManager(), picker.getClass().getSimpleName());
-      }
+    jumpDate.setOnClickListener(v -> {
+      DateTimePickerFragment picker = new DateTimePickerFragment();
+      picker.setMode(Mode.DATE);
+      picker.setCalendar(calendar);
+      picker.setListener((cal) -> new ApodTask().execute(cal.getTime()));
+      picker.show(getFragmentManager(), picker.getClass().getSimpleName());
     });
   }
 

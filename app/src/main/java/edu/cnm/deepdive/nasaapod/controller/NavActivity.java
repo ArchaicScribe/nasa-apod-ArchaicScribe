@@ -8,11 +8,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import edu.cnm.deepdive.nasaapod.ApodApplication;
-import edu.cnm.deepdive.nasaapod.HistoryFragment;
 import edu.cnm.deepdive.nasaapod.R;
 
 public class NavActivity extends AppCompatActivity
     implements OnNavigationItemSelectedListener {
+
+  private Fragment imageFragment;
+  private Fragment historyFragment;
 
 
   @Override
@@ -21,10 +23,19 @@ public class NavActivity extends AppCompatActivity
     setContentView(R.layout.activity_nav);
     BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
     navigation.setOnNavigationItemSelectedListener(this);
+    ApodApplication application = ApodApplication.getInstance();
     if (savedInstanceState == null) {
-      Fragment fragment = new ImageFragment();
-      ApodApplication.getInstance().loadFragment(this, fragment, fragment.getClass()
-          .getSimpleName());
+      imageFragment = new ImageFragment();
+      application.loadFragment(this, R.id.fragment_container,
+          imageFragment, imageFragment.getClass().getSimpleName(), true);
+      historyFragment = new HistoryFragment();
+      application.loadFragment(this, R.id.fragment_container,
+          historyFragment, historyFragment.getClass().getSimpleName(), true);
+    } else {
+      imageFragment = application.findFragment
+          (this, R.id.fragment_container, ImageFragment.class.getSimpleName());
+      historyFragment = application.findFragment
+          (this, R.id.fragment_container, HistoryFragment.class.getSimpleName());
     }
   }
 
@@ -33,14 +44,15 @@ public class NavActivity extends AppCompatActivity
     boolean hanlded = true;
     switch (menuItem.getItemId()) {
       case R.id.navigation_image:
-        //TODO load image display fragment.
+        ApodApplication.getInstance().showFragment(this,
+            R.id.fragment_container, imageFragment);
         break;
       case R.id.navigation_history:
-        Fragment fragment = new HistoryFragment();
-        ApodApplication.getInstance().loadFragment(this, fragment, fragment.getClass()
-            .getSimpleName());
+      ApodApplication.getInstance().showFragment(this,
+          R.id.fragment_container, historyFragment);
         break;
-      default: hanlded = false;
+      default:
+        hanlded = false;
     }
     return hanlded;
   }
