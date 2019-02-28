@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import edu.cnm.deepdive.nasaapod.ApodApplication;
@@ -13,15 +12,16 @@ import edu.cnm.deepdive.nasaapod.R;
 public class NavActivity extends AppCompatActivity
     implements OnNavigationItemSelectedListener {
 
-  private Fragment imageFragment;
-  private Fragment historyFragment;
+  private ImageFragment imageFragment;
+  private HistoryFragment historyFragment;
+  private BottomNavigationView navigation;
 
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_nav);
-    BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+    navigation = findViewById(R.id.navigation);
     navigation.setOnNavigationItemSelectedListener(this);
     ApodApplication application = ApodApplication.getInstance();
     if (savedInstanceState == null) {
@@ -30,13 +30,15 @@ public class NavActivity extends AppCompatActivity
           imageFragment, imageFragment.getClass().getSimpleName(), true);
       historyFragment = new HistoryFragment();
       application.loadFragment(this, R.id.fragment_container,
-          historyFragment, historyFragment.getClass().getSimpleName(), true);
+          historyFragment, historyFragment.getClass().getSimpleName(), false);
+      historyFragment.setImageFragment(imageFragment);
     } else {
-      imageFragment = application.findFragment
-          (this, R.id.fragment_container, ImageFragment.class.getSimpleName());
-      historyFragment = application.findFragment
-          (this, R.id.fragment_container, HistoryFragment.class.getSimpleName());
+      imageFragment = (ImageFragment) application.findFragment(
+          this, R.id.fragment_container, ImageFragment.class.getSimpleName());
+      historyFragment = (HistoryFragment) application.findFragment(
+          this, R.id.fragment_container, HistoryFragment.class.getSimpleName());
     }
+    historyFragment.setImageFragment(imageFragment);
   }
 
   @Override
@@ -48,13 +50,17 @@ public class NavActivity extends AppCompatActivity
             R.id.fragment_container, imageFragment);
         break;
       case R.id.navigation_history:
-      ApodApplication.getInstance().showFragment(this,
-          R.id.fragment_container, historyFragment);
+        ApodApplication.getInstance().showFragment(this,
+            R.id.fragment_container, historyFragment);
         break;
       default:
         hanlded = false;
     }
     return hanlded;
+  }
+
+  public BottomNavigationView getNavigation() {
+    return navigation;
   }
 
 }
